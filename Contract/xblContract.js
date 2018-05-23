@@ -70,7 +70,7 @@ var xblContract = function() {
 
     LocalContractStorage.defineMapProperty(this, "userBidHistory", { //用户参加活动历史
         parse: function(jsonText) {
-            return JSON.parse(jsonText);
+            return JSON.parse(jsonText);  //是个数组对象 [{},{}]
         },
         stringify: function(obj) {
             return obj.toString();
@@ -128,7 +128,9 @@ xblContract.prototype = {
 
         if(this.playerCount <= this.firePoint) {
             this.pool.put(this.playerCount, bidContent);
-            this.userBidHistory.put(bidContent.address, this.getCurrentUserBidHistory().push(bidContent));
+            var currentUserBidHistory = this.getCurrentUserBidHistory();
+            currentUserBidHistory.push(bidContent);
+            this.userBidHistory.put(bidContent.address, currentUserBidHistory);
             this.nasInPool = new BigNumber(value/1000000000000000000).plus(this.nasInPool);  //value的单位wei
         }
 
@@ -314,6 +316,10 @@ xblContract.prototype = {
             return history.slice(-20);
         }
         return [];
+    },
+
+    getCurrentUserAllBidHistory: function() {
+        return this.userBidHistory.get(Blockchain.transaction.from);
     },
 
     //获取当前期概况所有数据

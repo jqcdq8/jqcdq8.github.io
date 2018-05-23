@@ -31,11 +31,18 @@ var history_result_panel = new Vue({
     }
 });
 
+var history_bid_panel = new  Vue({
+    el: '#history-bid-panel',
+    data: {
+        results: []
+    }
+});
+
 var bidPanel = new Vue({
     el: '#bid-panel',
     data: {
         target: '',
-        nas_input: 0.2,
+        nas_input: 0.5,
         btn_text: '确认提交',
         send_result: ''
     },

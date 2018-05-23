@@ -161,6 +161,7 @@
                     current_period_overview_panel.nasInThePool = jsonData.nasInPool;
                     rule_panel.firePoint = jsonData.firePoint;
                     rule_panel.minNasToJoin = jsonData.minNasToJoin;
+                    bidPanel.nas_input = jsonData.minNasToJoin;
                 }
             });
     }
@@ -198,23 +199,7 @@
     }
 
     function bidSent(resp) {
-        console.log("zzzzzzz: " + JSON.stringify(resp));
-        //document.getElementById("callResult").innerHTML = "开奖结果将以短信形式推送给您。（短信接口开发中）";
-    }
-
-    function queryBidPayInfo() {
-        nebPay.queryPayInfo(serialNumber)   //search transaction result from server (result upload to server by app)
-            .then(function (resp) {
-                console.log("tx result: " + resp);   //resp is a JSON string
-                var respObject = JSON.parse(resp);
-                if(respObject.code === 0){
-                    alert(`set ${$("#search_value").val()} succeed!`);
-                    clearInterval(intervalQuery);
-                }
-            })
-            .catch(function (err) {
-                console.log(err);
-            });
+        console.log("已经打开钱包界面");
     }
 
     function fill_history_bid_panel() {

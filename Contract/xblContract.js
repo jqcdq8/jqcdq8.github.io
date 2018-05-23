@@ -307,11 +307,11 @@ xblContract.prototype = {
         return bidContents;
     },
 
-
+    //仅返回最近20条(节省存储空间)，下次客户再添加时，也是先执行这个操作，所以始终最多有21条记录
     getCurrentUserBidHistory: function() {
         var history = this.userBidHistory.get(Blockchain.transaction.from);
         if(history) {
-            return history;
+            return history.slice(-20);
         }
         return [];
     },
@@ -346,9 +346,11 @@ xblContract.prototype = {
         }
     },
 
+    //出于性能考虑，最多返回最近20期
     getHistoryResultOverview: function () {
         var resultOverview = [];
-        for (var i = this.currentPeriod - 1; i > 0; i--) {
+        var loopEnd = this.currentPeriod - 20 <= 0? 0 : this.currentPeriod - 20;
+        for (var i = this.currentPeriod - 1; i > loopEnd; i--) {
             var obj = this.historyResults.get(i);
             if(!obj) {
                 continue;   //如果当前只是第一期进行中，那么还没有历史数据，不用继续，直接返回

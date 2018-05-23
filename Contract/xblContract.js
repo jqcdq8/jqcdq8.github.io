@@ -128,7 +128,7 @@ xblContract.prototype = {
 
         if(this.playerCount <= this.firePoint) {
             this.pool.put(this.playerCount, bidContent);
-            this.userBidHistory.add(bidContent.address, this.getCurrentUserBidHistory().push(bidContent));
+            this.userBidHistory.put(bidContent.address, this.getCurrentUserBidHistory().push(bidContent));
             this.nasInPool = new BigNumber(value/1000000000000000000).plus(this.nasInPool);  //value的单位wei
         }
 

@@ -32,10 +32,12 @@ var BidContent = function(jsonStr) {
         this.address = obj.address;  //下注人地址
         this.bidAmount = obj.bidAmount;  //下注数量
         this.bidTarget = obj.bidTarget; //下注目标，"我"，"爱"，"星"，"冰"，"乐"
+        this.period = obj.period; //参与的期数
     } else {
         this.address = "";
         this.bidAmount = new BigNumber(0);
         this.bidTarget = "";
+        this.period = 0;
     }
 };
 
@@ -60,6 +62,15 @@ var xblContract = function() {
     LocalContractStorage.defineMapProperty(this, "pool", { //奖池，有上限，人次到达后开奖
         parse: function(jsonStr) {
             return new BidContent(jsonStr);
+        },
+        stringify: function(obj) {
+            return obj.toString();
+        }
+    });
+
+    LocalContractStorage.defineMapProperty(this, "userBidHistory", { //用户参加活动历史
+        parse: function(jsonText) {
+            return JSON.parse(jsonText);
         },
         stringify: function(obj) {
             return obj.toString();
@@ -106,6 +117,7 @@ xblContract.prototype = {
         bidContent.address = from;
         bidContent.bidTarget = target;
         bidContent.bidAmount = new BigNumber(value/1000000000000000000); //单位换算成NAS
+        bidContent.period = this.currentPeriod;
         this.playerCount += 1;
 
         if(this.playerCount > this.firePoint) {
@@ -116,6 +128,7 @@ xblContract.prototype = {
 
         if(this.playerCount <= this.firePoint) {
             this.pool.put(this.playerCount, bidContent);
+            this.userBidHistory.add(bidContent.address, this.getCurrentUserBidHistory().push(bidContent));
             this.nasInPool = new BigNumber(value/1000000000000000000).plus(this.nasInPool);  //value的单位wei
         }
 
@@ -292,6 +305,15 @@ xblContract.prototype = {
             }
         }
         return bidContents;
+    },
+
+
+    getCurrentUserBidHistory: function() {
+        var history = this.userBidHistory.get(Blockchain.transaction.from);
+        if(history) {
+            return history;
+        }
+        return [];
     },
 
     //获取当前期概况所有数据

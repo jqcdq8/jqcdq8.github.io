@@ -189,9 +189,8 @@ xblContract.prototype = {
                     });
                     winner.rewardAmount = winner.shouldRewardAmount;
                 }
-                this.nasInPool = new BigNumber(this.nasInPool).minus(winner.rewardAmount);
             }
-
+            this.nasInPool = new BigNumber(this.nasInPool).minus(totalRewardAmount);
             result.winners = winners;
             result.totalRewardAmount = totalRewardAmount;
             result.commission = commission;
@@ -372,9 +371,9 @@ xblContract.prototype = {
         return resultOverview;
     },
 
-    //退款给本期成立后款项才到账的那些下注人，扣除手续费
+    //退款给本期成立后的超募名额。前面业务逻辑上会避免超募，系统在收到exception后用户的转账进不来，故此方法暂时不用调用
     _refund: function (address, amount) {
-        var transferAmount  = new BigNumber(amount).times(1000000000000000000 * (1-this.commissionRate));
+        var transferAmount  = new BigNumber(amount).times(1000000000000000000);
         Blockchain.transfer(address, transferAmount);
     },
 
@@ -422,7 +421,6 @@ xblContract.prototype = {
                         && lastWinners[k].shouldRewardAmount === winner.shouldRewardAmount) {
                         lastWinners[k].rewardAmount = winner.shouldRewardAmount;
                         this.historyResults.put(this.currentPeriod, lastWinners);
-                        this.nasInPool = new BigNumber(this.nasInPool).minus(winner.shouldRewardAmount);
                         break;
                     }
                 }

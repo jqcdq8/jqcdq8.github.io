@@ -97,9 +97,26 @@
 
         <div class="mdl-grid">
             <div class="mdl-cell mdl-cell--12-col">
+                <div id="history-bid-panel" class="half-card-wide mdl-card mdl-shadow--2dp">
+                    <div class="my_card_title">
+                        <h2 class="my_card_title-text">我的投注历史（仅展示最近20条）</h2>
+                    </div>
+                    <div class="mdl-card__supporting-text">
+                        <ol>
+                            <li v-for="result in results">
+                                第{{result.period}}期 投注"{{result.bidTarget}}" {{result.bidAmount}}个NAS
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mdl-grid">
+            <div class="mdl-cell mdl-cell--12-col">
                 <div id="history-result-panel" class="half-card-wide mdl-card mdl-shadow--2dp">
                     <div class="my_card_title">
-                        <h2 class="my_card_title-text">往期开奖结果</h2>
+                        <h2 class="my_card_title-text">往期开奖结果（仅展示最近20期）</h2>
                     </div>
                     <div class="mdl-card__supporting-text">
                         <ol>
@@ -119,7 +136,7 @@
 <script>
     var NebPay = require("nebpay");
     var nebPay = new NebPay();
-    var contractAddress = "n1wEs8yA2uPvbkiGtk96zh8aiZD2oLwQis3";
+    var contractAddress = "n1xZXhePw1Cuvg5o4EW1q7ohdag3zqXc9oJ";
     var serialNumber;
     var intervalQuery;
 
@@ -150,10 +167,12 @@
 
     fill_current_period_overview();
     fill_history_result_panel();
+    fill_history_bid_panel();
     setInterval(function () {
         fill_current_period_overview();
         fill_history_result_panel();
-    }, 15000);
+        fill_history_bid_panel();
+    }, 20000);
 
     function bid() {
         serialNumber = nebPay.call(contractAddress,
@@ -196,6 +215,26 @@
             .catch(function (err) {
                 console.log(err);
             });
+    }
+
+    function fill_history_bid_panel() {
+        nebPay.simulateCall(contractAddress, "", "getCurrentUserBidHistory", "",
+            {
+                qrcode: {
+                    showQRCode: false
+                },
+                goods: {
+                    name: "query",
+                    desc: "Query history bid detail"
+                },
+                listener: function (res) {
+                    console.log('====================');
+                    console.log(res.result);
+                    var jsonData = JSON.parse(res.result);
+                    history_bid_panel.results = jsonData;
+                }
+            });
+
     }
 
     function fill_history_result_panel() {

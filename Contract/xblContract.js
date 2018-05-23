@@ -70,10 +70,10 @@ var xblContract = function() {
 
     LocalContractStorage.defineMapProperty(this, "userBidHistory", { //用户参加活动历史
         parse: function(jsonText) {
-            return JSON.parse(jsonText);  //是个数组对象 [{},{}]
+            return JSON.parse(jsonText);  //是个数组对象字符串
         },
         stringify: function(obj) {
-            return obj.toString();
+            return JSON.stringify(obj);
         }
     });
 
@@ -94,7 +94,7 @@ xblContract.prototype = {
         this.bidTargets = ["我","爱","星","冰","乐"];
         this.currentPeriod = 1;
         this.firePoint = 5;
-        this.minNasToJoin = 0.2;
+        this.minNasToJoin = 0.5;
         this.commissionRate = 0.02;
         this.rewardRate = 0.8;
         this.nasInPool = new BigNumber(0);

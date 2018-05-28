@@ -115,7 +115,7 @@ function fill_current_period_overview() {
         bidPanel.nas_input = jsonData.minNasToJoin;
     }).catch(function (err) {
         //cbSearch(err)
-        console.log('发生异常：' + err.stack());
+        console.log('发生异常：' + err.toString());
     });
 }
 
@@ -168,7 +168,7 @@ function fill_history_bid_panel() {
         var jsonData = JSON.parse(res.result);
         history_bid_panel.results = jsonData;
     }).catch(function (err) {
-        console.log('发生异常：' + err.stack());
+        console.log('发生异常：' + err.toString());
     });
 }
 
@@ -185,6 +185,6 @@ function fill_history_result_panel() {
         history_result_panel.results = jsonData;
     }).catch(function (err) {
         //cbSearch(err)
-        console.log('发生异常：' + err.stack());
+        console.log('发生异常：' + err.toString());
     });
 }

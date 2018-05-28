@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>我爱星冰乐-有奖竞猜</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" href="favicon.ico"/>
     <link href="https://cdn.bootcss.com/bootstrap-material-design/4.0.2/bootstrap-material-design.min.css"
           rel="stylesheet">
     <link href="https://cdn.bootcss.com/material-design-lite/1.3.0/material.amber-cyan.min.css" rel="stylesheet">
@@ -21,6 +22,7 @@
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/vue/2.5.17-beta.0/vue.min.js"></script>
     <script src="./js/nebpay.js"></script>
+    <script src="./js/nebulas.js"></script>
 </head>
 <body>
 <div class="mdl-layout mdl-js-layout">
@@ -143,113 +145,5 @@
     </main>
 </div>
 <script src="./js/home.js"></script>
-<script>
-    var NebPay = require("nebpay");
-    var nebPay = new NebPay();
-    var contractAddress = "n1yz9WUM1b9AVgAL3MtmcHfJmotkZuJgkAv";
-    var serialNumber;
-    var intervalQuery;
-
-    if (typeof (webExtensionWallet) === "undefined") {
-        alert("请先安装星云钱包插件.");
-    }
-
-    function fill_current_period_overview() {
-        nebPay.simulateCall(contractAddress, "", "getCurrentPeriodOverView", "",
-            {
-                qrcode: {
-                    showQRCode: false
-                },
-                goods: {
-                    name: "query",
-                    desc: "Query current period overview"
-                },
-                listener: function (res) {
-                    var jsonData = JSON.parse(res.result);
-                    current_period_overview_panel.period = jsonData.period;
-                    current_period_overview_panel.count = jsonData.playerCount;
-                    current_period_overview_panel.nasInThePool = jsonData.nasInPool;
-                    rule_panel.firePoint = jsonData.firePoint;
-                    rule_panel.minNasToJoin = jsonData.minNasToJoin;
-                    bidPanel.nas_input = jsonData.minNasToJoin;
-                }
-            });
-    }
-
-    fill_current_period_overview();
-    fill_history_result_panel();
-    fill_history_bid_panel();
-    setInterval(function () {
-        fill_current_period_overview();
-        fill_history_result_panel();
-        fill_history_bid_panel();
-    }, 20000);
-
-    function bid() {
-        serialNumber = nebPay.call(contractAddress,
-            bidPanel.nas_Num,
-            'bid',
-            "[\"" + bidPanel.target + "\"]",
-            {
-                qrcode: {
-                    showQRCode: false
-                },
-                goods: {
-                    name: "Bid",
-                    desc: "Nas for bid"
-                },
-                listener: bidSent
-            });
-
-        /**
-        intervalQuery = setInterval(function () {
-            queryBidPayInfo();
-        }, 5000);
-         **/
-    }
-
-    function bidSent(resp) {
-        console.log("已经打开钱包界面");
-    }
-
-    function fill_history_bid_panel() {
-        nebPay.simulateCall(contractAddress, "", "getCurrentUserBidHistory", "",
-            {
-                qrcode: {
-                    showQRCode: false
-                },
-                goods: {
-                    name: "query",
-                    desc: "Query history bid detail"
-                },
-                listener: function (res) {
-                    console.log('====================');
-                    console.log(res.result);
-                    var jsonData = JSON.parse(res.result);
-                    history_bid_panel.results = jsonData;
-                }
-            });
-
-    }
-
-    function fill_history_result_panel() {
-
-        nebPay.simulateCall(contractAddress, "", "getHistoryResultOverview", "",
-            {
-                qrcode: {
-                    showQRCode: false
-                },
-                goods: {
-                    name: "query",
-                    desc: "Query current period overview"
-                },
-                listener: function (res) {
-                    var jsonData = JSON.parse(res.result);
-                    history_result_panel.results = jsonData;
-                }
-            });
-
-    }
-</script>
 </body>
 </html>
